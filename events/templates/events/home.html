@@ -1,0 +1,91 @@
+{% extends 'events/base.html' %}
+
+{% block title %}Home - UniEvents{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="p-5 mb-4 rounded-4 text-white text-center"
+     style="background: linear-gradient(135deg, #1a237e, #e53935);">
+    <h1 class="display-4 fw-bold">
+        <i class="fas fa-university me-3"></i>UniEvents
+    </h1>
+    <p class="lead">Book university events, seminars, and workshops easily.</p>
+    <a href="/events/" class="btn btn-light btn-lg fw-bold mt-2">
+        <i class="fas fa-calendar-alt me-2"></i>Browse Events
+    </a>
+</div>
+
+<!-- Stats -->
+<div class="row g-4 mb-5 text-center">
+    <div class="col-md-4">
+        <div class="card p-4">
+            <i class="fas fa-calendar-check fa-3x mb-3" style="color:#1a237e;"></i>
+            <h3 class="fw-bold">{{ total_events }}</h3>
+            <p class="text-muted mb-0">Total Events</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4">
+            <i class="fas fa-users fa-3x mb-3" style="color:#e53935;"></i>
+            <h3 class="fw-bold">{{ total_bookings }}</h3>
+            <p class="text-muted mb-0">Bookings Made</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4">
+            <i class="fas fa-rocket fa-3x mb-3" style="color:#f57c00;"></i>
+            <h3 class="fw-bold">{{ upcoming_count }}</h3>
+            <p class="text-muted mb-0">Upcoming Events</p>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Events -->
+<h2 class="fw-bold mb-4" style="color:#1a237e; border-left: 4px solid #e53935; padding-left: 15px;">
+    <i class="fas fa-fire me-2"></i>Latest Events
+</h2>
+
+<div class="row g-4">
+    {% for event in latest_events %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div style="height:6px; background:
+                {% if event.category == 'seminar' %}#1a237e
+                {% elif event.category == 'workshop' %}#e53935
+                {% elif event.category == 'conference' %}#f57c00
+                {% else %}#2e7d32{% endif %};
+                border-radius: 15px 15px 0 0;">
+            </div>
+            <div class="card-body">
+                <span class="badge mb-2
+                    {% if event.category == 'seminar' %}badge-seminar
+                    {% elif event.category == 'workshop' %}badge-workshop
+                    {% elif event.category == 'conference' %}badge-conference
+                    {% else %}badge-lecture{% endif %}">
+                    {{ event.get_category_display }}
+                </span>
+                <h5 class="fw-bold">{{ event.title }}</h5>
+                <p class="text-muted small">{{ event.description|truncatewords:15 }}</p>
+                <p class="small">
+                    <i class="fas fa-calendar text-primary me-1"></i>{{ event.date }}
+                    &nbsp;
+                    <i class="fas fa-map-marker-alt text-danger me-1"></i>{{ event.location }}
+                </p>
+                {% if event.available_seats > 0 %}
+                    <span class="badge bg-success">{{ event.available_seats }} seats left</span>
+                {% else %}
+                    <span class="badge bg-danger">Sold Out</span>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-white border-0 pb-3">
+                <a href="/event/{{ event.id }}/" class="btn btn-book w-100">
+                    <i class="fas fa-ticket-alt me-2"></i>View & Book
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

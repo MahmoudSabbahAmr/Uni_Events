@@ -1,0 +1,121 @@
+{% extends 'events/base.html' %}
+
+{% block title %}{{ event.title }} - UniEvents{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <!-- Event Details -->
+    <div class="col-lg-7 mb-4">
+        <a href="/events/" class="btn btn-outline-secondary btn-sm mb-3">
+            <i class="fas fa-arrow-left me-1"></i>Back to Events
+        </a>
+
+        <div class="card p-4">
+            <div style="height:8px; background: linear-gradient(90deg, #1a237e, #e53935);
+                        border-radius:10px; margin-bottom:20px;"></div>
+
+            <span class="badge mb-3
+                {% if event.category == 'seminar' %}badge-seminar
+                {% elif event.category == 'workshop' %}badge-workshop
+                {% elif event.category == 'conference' %}badge-conference
+                {% else %}badge-lecture{% endif %}"
+                style="font-size:0.85rem; padding: 8px 15px;">
+                {{ event.get_category_display }}
+            </span>
+
+            <h2 class="fw-bold" style="color:#1a237e;">{{ event.title }}</h2>
+            <p class="lead text-muted">{{ event.description }}</p>
+
+            <hr>
+
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="p-3 rounded" style="background:#f0f2f5;">
+                        <i class="fas fa-calendar text-primary me-2"></i>
+                        <strong>Date</strong><br>
+                        {{ event.date }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="p-3 rounded" style="background:#f0f2f5;">
+                        <i class="fas fa-clock text-warning me-2"></i>
+                        <strong>Time</strong><br>
+                        {{ event.time }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="p-3 rounded" style="background:#f0f2f5;">
+                        <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                        <strong>Location</strong><br>
+                        {{ event.location }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="p-3 rounded" style="background:#f0f2f5;">
+                        <i class="fas fa-users text-success me-2"></i>
+                        <strong>Seats</strong><br>
+                        {{ event.available_seats }} / {{ event.total_seats }} available
+                    </div>
+                </div>
+            </div>
+
+            <!-- Countdown -->
+            <div class="mt-4 p-3 rounded text-white text-center"
+                 style="background: linear-gradient(135deg, #1a237e, #283593);">
+                <i class="fas fa-hourglass-half me-2"></i>
+                <strong>{{ event.date|timeuntil }}</strong> until this event
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Card -->
+    <div class="col-lg-5">
+        <div class="card sticky-top" style="top:20px;">
+            <div class="card-header text-white fw-bold"
+                 style="background: linear-gradient(135deg, #1a237e, #283593);
+                        border-radius:15px 15px 0 0; padding:20px;">
+                <i class="fas fa-ticket-alt me-2"></i>Book Your Seat
+            </div>
+            <div class="card-body p-4">
+
+                {% if user.is_authenticated %}
+                    {% if already_booked %}
+                        <div class="text-center py-3">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                            <h6 class="fw-bold">You already booked this event!</h6>
+                            <a href="/my-tickets/" class="btn btn-outline-primary mt-2">
+                                View My Tickets
+                            </a>
+                        </div>
+
+                    {% elif event.available_seats > 0 %}
+                        <p class="text-muted">Booking as: <strong>{{ user.username }}</strong></p>
+                        <a href="/book/{{ event.id }}/" class="btn btn-book w-100"
+                           style="font-size:1.1rem; padding:12px;">
+                            <i class="fas fa-check-circle me-2"></i>Confirm Booking
+                        </a>
+
+                    {% else %}
+                        <div class="text-center py-3">
+                            <i class="fas fa-ban fa-3x text-danger mb-3"></i>
+                            <h6 class="fw-bold">This event is Sold Out!</h6>
+                        </div>
+                    {% endif %}
+
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-lock fa-3x text-warning mb-3"></i>
+                        <h6 class="fw-bold">Login to book this event</h6>
+                        <a href="/login/" class="btn btn-book mt-2 w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login Now
+                        </a>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

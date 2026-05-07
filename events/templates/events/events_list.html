@@ -1,0 +1,169 @@
+{% extends 'events/base.html' %}
+
+{% block title %}Events - UniEvents{% endblock %}
+
+{% block content %}
+
+<h2 class="fw-bold mb-4" style="color:#1a237e; border-left: 4px solid #e53935; padding-left: 15px;">
+    <i class="fas fa-calendar-alt me-2"></i>Upcoming Events
+</h2>
+
+<!-- Search Bar -->
+<div class="row mb-4">
+    <div class="col-md-6 mx-auto">
+        <form method="GET" action="/events/">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control form-control-lg"
+                       placeholder="Search events, locations..."
+                       value="{{ query }}">
+                <button class="btn btn-book px-4" type="submit">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                {% if query %}
+                <a href="/events/" class="btn btn-outline-secondary px-3">
+                    <i class="fas fa-times"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if query %}
+<p class="text-muted mb-3">
+    <i class="fas fa-filter me-1"></i>
+    Results for: <strong>"{{ query }}"</strong> —
+    {{ events|length }} event{{ events|length|pluralize }} found
+</p>
+{% endif %}
+
+<div class="row g-4">
+    {% for event in events %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div style="height:6px; background:
+                {% if event.category == 'seminar' %}#1a237e
+                {% elif event.category == 'workshop' %}#e53935
+                {% elif event.category == 'conference' %}#f57c00
+                {% else %}#2e7d32{% endif %};
+                border-radius:15px 15px 0 0;">
+            </div>
+            <div class="card-body">
+                <span class="badge mb-2
+                    {% if event.category == 'seminar' %}badge-seminar
+                    {% elif event.category == 'workshop' %}badge-workshop
+                    {% elif event.category == 'conference' %}badge-conference
+                    {% else %}badge-lecture{% endif %}">
+                    {{ event.get_category_display }}
+                </span>
+
+                <h5 class="fw-bold">{{ event.title }}</h5>
+                <p class="text-muted small">{{ event.description|truncatewords:15 }}</p>
+
+                <p class="small mb-1">
+                    <i class="fas fa-calendar text-primary me-1"></i>
+                    <strong>{{ event.date }}</strong>
+                </p>
+                <p class="small mb-1">
+                    <i class="fas fa-clock text-warning me-1"></i>
+                    {{ event.time }}
+                </p>
+                <p class="small mb-2">
+                    <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                    {{ event.location }}
+                </p>
+
+                <div class="p-2 rounded mb-2 text-white text-center small fw-bold"
+                     style="background: linear-gradient(135deg, #1a237e, #283593);">
+                    <i class="fas fa-hourglass-half me-1"></i>
+                    {{ event.date|timeuntil }} left
+                </div>
+
+                {% if event.available_seats > 0 %}
+                    <span class="badge bg-success">
+                        <i class="fas fa-check-circle me-1"></i>
+                        {{ event.available_seats }} seats available
+                    </span>
+                {% else %}
+                    <span class="badge bg-danger">
+                        <i class="fas fa-times-circle me-1"></i>Sold Out
+                    </span>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-white border-0 pb-3">
+                <a href="/event/{{ event.id }}/" class="btn btn-book w-100">
+                    <i class="fas fa-ticket-alt me-2"></i>View & Book
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <i class="fas fa-search fa-4x text-muted mb-3"></i>
+        <h5 class="text-muted">No events found for "{{ query }}"</h5>
+        <a href="/events/" class="btn btn-book mt-3">
+            <i class="fas fa-calendar me-2"></i>Show All Events
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="d-flex justify-content-center mt-5">
+    <nav>
+        <ul class="pagination">
+
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link"
+                          style="background: #1a237e; border-color: #1a237e;">
+                        {{ num }}
+                    </span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+</div>
+
+<p class="text-center text-muted small">
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    — {{ page_obj.paginator.count }} total events
+</p>
+{% endif %}
+
+{% endblock %}
