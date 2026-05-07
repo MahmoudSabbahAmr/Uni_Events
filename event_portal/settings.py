@@ -48,15 +48,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'event_portal.wsgi.application'
 
+import dj_database_url
+import os
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Event_Portal',
-        'USER': 'postgres',
-        'PASSWORD': 'hr',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.parse(
+        os.environ.get("DATABASE_URL")
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
