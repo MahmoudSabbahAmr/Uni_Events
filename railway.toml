@@ -2,4 +2,4 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "python manage.py migrate && gunicorn event_portal.wsgi"
+startCommand = "python manage.py migrate && gunicorn event_portal.wsgi --bind 0.0.0.0:$PORT"
