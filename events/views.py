@@ -11,26 +11,9 @@ from django.db import models
 from django.core.paginator import Paginator
 
 
-
 def home(request):
-    try:
-        total_events = Event.objects.count()
-        total_bookings = Booking.objects.count()
-        upcoming_count = Event.objects.filter(date__gte=timezone.now().date()).count()
-        latest_events = Event.objects.filter(date__gte=timezone.now().date()).order_by('date')[:3]
-    except Exception as e:
-        print(f"Error: {e}")
-        total_events = 0
-        total_bookings = 0
-        upcoming_count = 0
-        latest_events = []
-
-    return render(request, 'events/home.html', {
-        'total_events': total_events,
-        'total_bookings': total_bookings,
-        'upcoming_count': upcoming_count,
-        'latest_events': latest_events,
-    })
+    from django.http import HttpResponse
+    return HttpResponse("Hello World!")
 
 
 def events_list(request):
