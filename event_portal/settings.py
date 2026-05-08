@@ -34,7 +34,7 @@ ROOT_URLCONF = 'event_portal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # ← ضيف ده
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
