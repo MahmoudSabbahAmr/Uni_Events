@@ -52,8 +52,12 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL'),
-        conn_max_age=600
+        default=config(
+            'DATABASE_URL',
+            default='postgresql://postgres:hr@localhost:5432/Event_Portal'
+        ),
+        conn_max_age=600,
+        ssl_require=False,
     )
 }
 
