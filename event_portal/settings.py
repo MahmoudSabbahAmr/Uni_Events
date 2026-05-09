@@ -1,11 +1,12 @@
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'Mahmoudsabbah2005.pythonanywhere.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -34,7 +35,7 @@ ROOT_URLCONF = 'event_portal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # ← ضيف ده
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -48,16 +49,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'event_portal.wsgi.application'
 
-import dj_database_url
-
 DATABASES = {
     'default': dj_database_url.config(
-        default=config(
-            'DATABASE_URL',
-            default='postgresql://postgres:hr@localhost:5432/Event_Portal'
-        ),
+        default=config('DATABASE_URL'),
         conn_max_age=600,
-        ssl_require=False,
+        ssl_require=True,
     )
 }
 
